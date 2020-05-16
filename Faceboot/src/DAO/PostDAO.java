@@ -14,7 +14,7 @@ import java.util.List;
  * @author juanc
  */
 public interface PostDAO {
-    
+        
     List<Post> findAll();
     List<Post> findByTag(String tag);
     Post findByContenido(String contenido);

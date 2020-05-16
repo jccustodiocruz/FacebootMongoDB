@@ -29,19 +29,42 @@ public class PostDAOImp implements PostDAO {
         this.posts = posts;
     }
 
+    private static Document fromPtoD(Post p) {
+        Document d = new Document()
+                .append("Usuario", p.getUsuario())
+                .append("Fecha", p.getFecha())
+                .append("Contenido", p.getContenido())
+                .append("Tags", p.getTags())
+                .append("Comentarios", p.getComentarios());
+
+        return d;
+    }
+
+    private static Document fromCtoD(Comentario c) {
+        Document d = new Document()
+                .append("Usuario", c.getUsuario())
+                .append("Fecha", c.getFecha())
+                .append("Contenido", c.getContenido());
+        return d;
+    }
+
+    private static Post fromDtoP(Document d) {
+        Post post = new Post();        
+
+        post.setUsuario(d.getString("Usuario"));
+        post.setFecha(d.getDate("Fecha"));
+        post.setContenido(d.getString("Contenido"));
+        post.setTags(d.getList("Tags", String.class));
+        post.setComentarios(d.getList("Comentarios", Comentario.class));
+        return post;
+    }
+
     @Override
     public List<Post> findAll() {
         List<Post> result = new ArrayList<>();
         for (Document d : posts.find()) {
-            Post post = new Post();
-            post.setUsuario(d.getString("Usuario"));
-            post.setFecha(d.getDate("Fecha"));
-            post.setContenido(d.getString("Contenido"));
-            post.setTags(d.getList("Tags", String.class));
-            post.setComentarios(d.getList("Comentarios", Comentario.class));
-            result.add(post);
+            result.add(fromDtoP(d));
         }
-
         return result;
     }
 
@@ -49,15 +72,8 @@ public class PostDAOImp implements PostDAO {
     public List<Post> findByTag(String tag) {
         List<Post> result = new ArrayList<>();
         for (Document d : posts.find(Filters.in("Tags", tag))) {
-            Post post = new Post();
-            post.setUsuario(d.getString("Usuario"));
-            post.setFecha(d.getDate("Fecha"));
-            post.setContenido(d.getString("Contenido"));
-            post.setTags(d.getList("Tags", String.class));
-            post.setComentarios(d.getList("Comentarios", Comentario.class));
-            result.add(post);
+            result.add(fromDtoP(d));
         }
-
         return result;
     }
 
@@ -69,34 +85,27 @@ public class PostDAOImp implements PostDAO {
 
     @Override
     public void add(Post post) {
-        Document document = new Document()
-                .append("Usuario", post.getUsuario())
-                .append("Fecha", post.getFecha())
-                .append("Contenido", post.getContenido())
-                .append("Tags", post.getTags())
-                .append("Comentarios", post.getComentarios());
-
-        posts.insertOne(document);
+        posts.insertOne(fromPtoD(post));
     }
 
     @Override
     public Post findByContenido(String contenido) {
         Document d = posts.find(Filters.eq("Contenido", contenido)).first();
-        Post post = new Post();
-        post.setUsuario(d.getString("Usuario"));
-        post.setFecha(d.getDate("Fecha"));
-        post.setContenido(d.getString("Contenido"));
-        post.setTags(d.getList("Tags", String.class));
-        post.setComentarios(d.getList("Comentarios", Comentario.class));
-        
+        Post post = fromDtoP(d);
         return post;
     }
 
     @Override
-    public void agregarComentario(Post post, List<Comentario> comentarios) {
+    public void agregarComentario(Post post, List<Comentario> c) {
+        List<Document> comentarios = new ArrayList<>();
+
+        for (Comentario c1 : c) {
+            comentarios.add(fromCtoD(c1));
+        }
+
         UpdateResult update;
         update = posts.updateOne(Filters.eq("Contenido", post.getContenido()),
-        Updates.addToSet("Comentarios", Arrays.asList(comentarios)));
+                Updates.set("Comentarios", comentarios));
     }
 
 }
