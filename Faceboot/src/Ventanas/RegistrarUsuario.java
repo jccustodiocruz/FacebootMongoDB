@@ -110,7 +110,7 @@ public class RegistrarUsuario extends javax.swing.JFrame {
 
         jLabel8.setText("Año");
         getContentPane().add(jLabel8);
-        jLabel8.setBounds(380, 300, 30, 16);
+        jLabel8.setBounds(390, 300, 30, 16);
 
         jLabel9.setText("Día");
         getContentPane().add(jLabel9);
@@ -136,9 +136,9 @@ public class RegistrarUsuario extends javax.swing.JFrame {
             }
         });
         getContentPane().add(cbMes);
-        cbMes.setBounds(310, 300, 60, 22);
+        cbMes.setBounds(320, 300, 60, 22);
         getContentPane().add(areaAnio);
-        areaAnio.setBounds(410, 300, 70, 30);
+        areaAnio.setBounds(420, 300, 70, 30);
 
         bRegistrar.setText("Registrar");
         bRegistrar.addActionListener(new java.awt.event.ActionListener() {

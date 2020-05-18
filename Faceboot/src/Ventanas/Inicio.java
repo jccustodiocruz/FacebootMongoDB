@@ -151,23 +151,23 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_bUsuariosActionPerformed
 
     private void bLogin1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLogin1ActionPerformed
-       Usuario user = new Usuario();
+        Usuario user = new Usuario();
         try {
             user = usuarioImp.findByUsername(areaUsername.getText());
             errorUser.setVisible(false);
         } catch (Exception e) {
-            errorUser.setVisible(true);            
+            errorUser.setVisible(true);
         }
-        
-        if(user.getPassword().equals(areaPassword.getText())){
+
+        if (user.getPassword().equals(areaPassword.getText())) {
             UsuarioLogin ul = new UsuarioLogin(usuarioImp, user, postImp);
             ul.setVisible(true);
-            this.dispose();
-        }else{
+
+        } else {
             errorPass.setVisible(true);
         }
-        
-        
+
+
     }//GEN-LAST:event_bLogin1ActionPerformed
 
     /**

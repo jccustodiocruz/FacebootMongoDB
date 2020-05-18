@@ -13,7 +13,6 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.bson.Document;
 
@@ -29,13 +28,31 @@ public class PostDAOImp implements PostDAO {
         this.posts = posts;
     }
 
+    private static Comentario fromDtoC(Document d) {
+        Comentario comentario = new Comentario();
+        comentario.setUsuario(d.getString("Usuario"));
+        comentario.setFecha(d.getDate("Fecha"));
+        comentario.setContenido(d.getString("Contenido"));
+
+        return comentario;
+    }
+
     private static Document fromPtoD(Post p) {
+        List<Document> comentarios = new ArrayList<>();
+        List<Comentario> c = p.getComentarios();
+
+        if (c != null) {
+            for (Comentario c1 : c) {
+                comentarios.add(fromCtoD(c1));
+            }
+        }
+
         Document d = new Document()
                 .append("Usuario", p.getUsuario())
                 .append("Fecha", p.getFecha())
                 .append("Contenido", p.getContenido())
                 .append("Tags", p.getTags())
-                .append("Comentarios", p.getComentarios());
+                .append("Comentarios", comentarios);
 
         return d;
     }
@@ -49,13 +66,22 @@ public class PostDAOImp implements PostDAO {
     }
 
     private static Post fromDtoP(Document d) {
-        Post post = new Post();        
+        Post post = new Post();
+
+        List<Comentario> comentario = new ArrayList<>();
+        List<Document> doc = d.getList("Comentarios", Document.class);
+
+        if (doc != null) {
+            for (int i = 0; i < doc.size(); i++) {
+                comentario.add(fromDtoC(doc.get(i)));
+            }
+        }
 
         post.setUsuario(d.getString("Usuario"));
         post.setFecha(d.getDate("Fecha"));
         post.setContenido(d.getString("Contenido"));
         post.setTags(d.getList("Tags", String.class));
-        post.setComentarios(d.getList("Comentarios", Comentario.class));
+        post.setComentarios(comentario);
         return post;
     }
 

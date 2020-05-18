@@ -256,6 +256,8 @@ public class MostrarPost extends javax.swing.JFrame {
         postImp.agregarComentario(post, comentarios);
         System.out.println("Esto es una prueba");
         this.dispose();      
+        MostrarPost mp = new MostrarPost(postImp, usuario, usuarioImp, post);
+        mp.setVisible(true);
     }//GEN-LAST:event_ComentarActionPerformed
 
     /**

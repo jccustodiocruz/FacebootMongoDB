@@ -10,6 +10,7 @@ import DAO.UsuarioDAOImp;
 import Entidades.Post;
 import Entidades.Usuario;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,12 +39,13 @@ public class UsuarioLogin extends javax.swing.JFrame {
         this.postImp = postImp;
         lUsername.setText(usuario.getUsername());
         modeloTabla();
-        llenarTabla();
+        List<Post> lp = postImp.findAll();
+        llenarTabla(lp);
+        labelError.setVisible(false);
     }
     
-    public void llenarTabla() {
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        List<Post> lp = postImp.findAll();
+    public void llenarTabla(List<Post> lp) {
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);        
         Object o[] = null;
         SimpleDateFormat sdf = new SimpleDateFormat("E dd/MM/yyyy HH:mm");
 
@@ -115,6 +117,9 @@ public class UsuarioLogin extends javax.swing.JFrame {
         bRealizarPost = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         bLogout = new javax.swing.JButton();
+        areaTag = new javax.swing.JTextField();
+        bBuscar = new javax.swing.JButton();
+        labelError = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(850, 550));
@@ -145,7 +150,7 @@ public class UsuarioLogin extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tPosts);
 
         getContentPane().add(jScrollPane1);
-        jScrollPane1.setBounds(32, 90, 790, 370);
+        jScrollPane1.setBounds(30, 80, 790, 370);
 
         bRealizarPost.setText("Realizar Post");
         bRealizarPost.addActionListener(new java.awt.event.ActionListener() {
@@ -154,7 +159,7 @@ public class UsuarioLogin extends javax.swing.JFrame {
             }
         });
         getContentPane().add(bRealizarPost);
-        bRealizarPost.setBounds(50, 470, 110, 25);
+        bRealizarPost.setBounds(50, 460, 110, 25);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setText("Posts");
@@ -169,6 +174,24 @@ public class UsuarioLogin extends javax.swing.JFrame {
         });
         getContentPane().add(bLogout);
         bLogout.setBounds(720, 20, 71, 25);
+
+        areaTag.setText("Buscar por tag");
+        getContentPane().add(areaTag);
+        areaTag.setBounds(390, 450, 290, 40);
+
+        bBuscar.setText("Buscar");
+        bBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bBuscarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(bBuscar);
+        bBuscar.setBounds(700, 460, 71, 25);
+
+        labelError.setForeground(new java.awt.Color(255, 51, 51));
+        labelError.setText("No hay post con ese tag");
+        getContentPane().add(labelError);
+        labelError.setBounds(230, 460, 160, 20);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -196,6 +219,21 @@ public class UsuarioLogin extends javax.swing.JFrame {
         
         this.dispose();
     }//GEN-LAST:event_tPostsMouseClicked
+
+    private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
+        String tag = areaTag.getText();
+        
+        List<Post> posts = new ArrayList<>();
+        
+        if(postImp.findByTag(tag) != null){
+            posts = postImp.findByTag(tag);
+            llenarTabla(posts);
+            labelError.setVisible(false);
+        }
+        else{
+            labelError.setVisible(true);
+        }
+    }//GEN-LAST:event_bBuscarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -233,11 +271,14 @@ public class UsuarioLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField areaTag;
+    private javax.swing.JButton bBuscar;
     private javax.swing.JButton bLogout;
     private javax.swing.JButton bRealizarPost;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lUsername;
+    private javax.swing.JLabel labelError;
     private javax.swing.JTable tPosts;
     // End of variables declaration//GEN-END:variables
 }
